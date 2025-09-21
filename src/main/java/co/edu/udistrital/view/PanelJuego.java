@@ -5,7 +5,9 @@
 package co.edu.udistrital.view;
 
 import java.awt.Color;
-import javax.swing.JLabel;
+import java.awt.Font;
+
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 /**
@@ -14,9 +16,49 @@ import javax.swing.JPanel;
  */
 public class PanelJuego extends JPanel {
 
+    private JButton btnVolver;
+    private JButton btnHistorial;
+
     public PanelJuego() {
-        setBackground(Color.GREEN);
-        add(new JLabel("Aquí va el juego"));
+        // Configurar el panel
+        setLayout(null);
+        setSize(800, 600);
+        setBackground(Color.BLACK);
+
+        // Botón de volver en la esquina superior izquierda
+        btnVolver = new JButton("Volver");
+        btnVolver.setFont(new Font("Tahoma", Font.BOLD, 12));
+        btnVolver.setBackground(Color.WHITE);
+        btnVolver.setForeground(Color.BLACK);
+        btnVolver.setFocusPainted(false);
+        btnVolver.setBounds(20, 20, 100, 40);
+        add(btnVolver);
+
+        // Botón de historial debajo del botón volver
+        btnHistorial = new JButton("Historial");
+        btnHistorial.setFont(new Font("Tahoma", Font.BOLD, 12));
+        btnHistorial.setBackground(Color.WHITE);
+        btnHistorial.setForeground(Color.BLACK);
+        btnHistorial.setFocusPainted(false);
+        btnHistorial.setBounds(20, 70, 100, 40);
+        add(btnHistorial);
+
+    }
+
+    public JButton getBtnVolver() {
+        return btnVolver;
+    }
+
+    public void setBtnVolver(JButton btnVolver) {
+        this.btnVolver = btnVolver;
+    }
+
+    public JButton getBtnHistorial() {
+        return btnHistorial;
+    }
+
+    public void setBtnHistorial(JButton btnHistorial) {
+        this.btnHistorial = btnHistorial;
     }
 
 }

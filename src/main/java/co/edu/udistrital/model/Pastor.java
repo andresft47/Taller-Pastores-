@@ -4,6 +4,8 @@
  */
 package co.edu.udistrital.model;
 
+import java.util.Random;
+
 /**
  *
  * @author Andres Felipe Tovar
@@ -14,6 +16,11 @@ public class Pastor {
     public int feligreses;
     public double dinero;
     public String clero;
+
+    // Cada pastor solo puede tener uno de los cuatro cleros validos
+    private static final String[] cleros = { "Católico", "Protestante", "Ortodoxo", "Anglicano" };
+
+    private static Random random = new Random();
 
     public Pastor() {
         this.nombre = "";
@@ -61,9 +68,20 @@ public class Pastor {
         this.clero = clero;
     }
 
+    /**
+     * Retorna un clero aleatorio del array de cleros
+     * 
+     * @return Un clero aleatorio
+     */
+    public static String obtenerCleroAleatorio() {
+        int indiceAleatorio = random.nextInt(cleros.length);
+        return cleros[indiceAleatorio];
+    }
+
     @Override
     public String toString() {
-        return "Pastor{" + "nombre=" + nombre + ", feligreses=" + feligreses + ", dinero=" + dinero + ", clero=" + clero + '}';
+        return "Pastor{" + "nombre=" + nombre + ", feligreses=" + feligreses + ", dinero=" + dinero + ", clero=" + clero
+                + '}';
     }
 
 }
