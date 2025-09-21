@@ -363,7 +363,7 @@ public class Controller implements ActionListener {
     }
 
     // ------------------------------
-    //  Helpers sobre la lista circular (se hacen en el Controller, no se crean clases)
+    //  Helpers sobre la lista circular
     // ------------------------------
 
     /**
@@ -394,7 +394,7 @@ public class Controller implements ActionListener {
     }
 
     // ------------------------------
-    //  Métodos auxiliares existentes (creados tomando como base tu código original)
+    //  Métodos auxiliares existentes 
     // ------------------------------
 
     /**
