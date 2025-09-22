@@ -4,18 +4,19 @@
  */
 package co.edu.udistrital.controller;
 
-import co.edu.udistrital.model.ListaCircularDoble;
-import co.edu.udistrital.model.Pastor;
-import co.edu.udistrital.model.Nodo;
-import co.edu.udistrital.view.VentanaPrincipal;
-
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+
+import javax.swing.JOptionPane;
+
+import co.edu.udistrital.model.ListaCircularDoble;
+import co.edu.udistrital.model.Nodo;
+import co.edu.udistrital.model.Pastor;
+import co.edu.udistrital.view.VentanaPrincipal;
 
 public class Controller implements ActionListener {
 
@@ -30,12 +31,9 @@ public class Controller implements ActionListener {
         ventana = new VentanaPrincipal();
         pilaEliminados = new ArrayDeque<>();
 
-        // Vincular listeners a botones (asegúrate de usar la versión del PanelJuego que tiene estos getters)
+        // Vincular listeners a botones (asegúrate de usar la versión del PanelJuego que
+        // tiene estos getters)
         asignarOyentes();
-
-        // Crear lista inicial de pastores (puedes cambiar la cantidad)
-        listaPrincipal = crearListaPastores(6);
-        nodoActual = listaPrincipal.estaVacia() ? null : listaPrincipal.getCabeza();
 
         // Mostrar vista inicial (actualiza mesa y eliminados)
         actualizarVista();
@@ -55,11 +53,9 @@ public class Controller implements ActionListener {
 
         // Juego (estos getters deben existir en tu PanelJuego)
         ventana.getpJuego().getBtnVolver().addActionListener(this);
-        ventana.getpJuego().getBtnHistorial().addActionListener(this);
         ventana.getpJuego().getBtnExpulsar().addActionListener(this);
         ventana.getpJuego().getBtnRescatar().addActionListener(this);
         ventana.getpJuego().getBtnRobar().addActionListener(this);
-        ventana.getpJuego().getBtnTerminarTurno().addActionListener(this);
     }
 
     @Override
@@ -69,8 +65,14 @@ public class Controller implements ActionListener {
         // Menú
         if (src == ventana.getpMenu().getBtnJugar()) {
             // Iniciar (o reiniciar) juego
-            listaPrincipal = crearListaPastores(6);
+            String cantidad = JOptionPane.showInputDialog(ventana,
+                    "Ingrese la cantidad de Pastores para inciar el juego");
+
+            listaPrincipal = crearListaPastores(Integer.parseInt(cantidad));
+
             pilaEliminados.clear();
+
+            // Inicializa el nodo actual para que sea la cabeza, el primero que eligue
             nodoActual = listaPrincipal.estaVacia() ? null : listaPrincipal.getCabeza();
             actualizarVista();
             ventana.mostrarPanel("JUEGO");
@@ -96,11 +98,6 @@ public class Controller implements ActionListener {
             ventana.mostrarPanel("MENU");
             return;
         }
-        if (src == ventana.getpJuego().getBtnHistorial()) {
-            ventana.mostrarPanel("HISTORIAL");
-            return;
-        }
-
         // Acciones del juego
         if (src == ventana.getpJuego().getBtnExpulsar()) {
             expulsarJugador();
@@ -114,13 +111,11 @@ public class Controller implements ActionListener {
             robarJugador();
             return;
         }
-        if (src == ventana.getpJuego().getBtnTerminarTurno()) {
-            terminarTurno();
-        }
+
     }
 
     // ------------------------------
-    //  Lógica de juego
+    // Lógica de juego
     // ------------------------------
 
     private void actualizarVista() {
@@ -131,8 +126,12 @@ public class Controller implements ActionListener {
             do {
                 Pastor p = temp.getDato();
                 String marcaTurno = (temp == nodoActual) ? " <- turno" : "";
-                nombresMesa.add(p.getNombre() + " (F:" + p.getFeligreses() + ", $:" + p.getDinero() + ")" + marcaTurno);
+                nombresMesa
+                        .add(p.getNombre() + " (Clero: " + p.getClero() + ", Feligreses:" + p.getFeligreses() + ", $:"
+                                + p.getDinero() + ")" + marcaTurno);
+
                 temp = temp.getSiguiente();
+
             } while (temp != listaPrincipal.getCabeza());
         }
         ventana.getpJuego().actualizarMesa(nombresMesa);
@@ -140,28 +139,28 @@ public class Controller implements ActionListener {
         // Actualiza la lista de expulsados (pila)
         List<String> nombresEliminados = new ArrayList<>();
         for (Pastor p : pilaEliminados) {
-            nombresEliminados.add(p.getNombre() + " (F:" + p.getFeligreses() + ", $:" + p.getDinero() + ")");
+            nombresEliminados.add(p.getNombre() + " (Clero: " + p.getClero() + ")");
         }
         ventana.getpJuego().actualizarEliminados(nombresEliminados);
     }
 
     /**
      * Expulsar: muestra dos ventanas emergentes en secuencia:
-     *  1) Dirección: Izquierda / Derecha
-     *  2) n: cantidad de vecinos (1 .. tamanio-1)
+     * 1) Dirección: Izquierda / Derecha
+     * 2) n: cantidad de vecinos (1 .. tamanio-1)
      *
      * Selecciona entre los n vecinos en esa dirección el que tenga menos feligreses
-     * y lo expulsa (sus feligreses y dinero pasan al expulsor). El expulsado va a la pila interna.
+     * y lo expulsa (sus feligreses y dinero pasan al expulsor). El expulsado va a
+     * la pila interna.
      */
     private void expulsarJugador() {
         if (listaPrincipal == null || listaPrincipal.estaVacia() || listaPrincipal.getTamanio() <= 1) {
             JOptionPane.showMessageDialog(ventana, "No hay suficientes participantes para expulsar.");
             return;
         }
-        if (nodoActual == null) nodoActual = listaPrincipal.getCabeza();
 
         // 1) Dirección
-        String[] opciones = {"Izquierda", "Derecha"};
+        String[] opciones = { "Izquierda", "Derecha" };
         String direccion = (String) JOptionPane.showInputDialog(
                 ventana,
                 "Elige la dirección:",
@@ -170,7 +169,8 @@ public class Controller implements ActionListener {
                 null,
                 opciones,
                 opciones[0]);
-        if (direccion == null) return; // cancelado
+        if (direccion == null)
+            return; // cancelado
 
         // 2) Cantidad n
         int max = listaPrincipal.getTamanio() - 1;
@@ -178,14 +178,17 @@ public class Controller implements ActionListener {
                 "Ingrese la cantidad de vecinos (1 - " + max + "):",
                 "Cantidad de vecinos",
                 JOptionPane.QUESTION_MESSAGE);
-        if (input == null) return; // cancelado
+        if (input == null)
+            return; // cancelado
         int n;
+
         try {
             n = Integer.parseInt(input);
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(ventana, "Número inválido.");
             return;
         }
+
         if (n < 1 || n > max) {
             JOptionPane.showMessageDialog(ventana, "Debes ingresar un número entre 1 y " + max);
             return;
@@ -250,13 +253,25 @@ public class Controller implements ActionListener {
             nodoActual = null;
         }
 
+        siguienteTurno();
+
+        verificarGanador();
+
         actualizarVista();
+    }
+
+    public void verificarGanador() {
+        if (ventana.getpJuego().getModeloMesa().size() == 1) {
+            JOptionPane.showMessageDialog(ventana, "El ganador es: " + nodoActual.getDato().getNombre());
+        }
     }
 
     /**
      * Rescatar: si hay expulsados en la pila, se desapila el ultimo expulsado.
-     * El rescatado recibe la mitad exacta (enteros para feligreses, dinero con 2 decimales)
-     * del que lo rescata. Se inserta al lado del que rescata (después de nodoActual).
+     * El rescatado recibe la mitad exacta (enteros para feligreses, dinero con 2
+     * decimales)
+     * del que lo rescata. Se inserta al lado del que rescata (después de
+     * nodoActual).
      */
     private void rescatarJugador() {
         if (pilaEliminados.isEmpty()) {
@@ -267,7 +282,13 @@ public class Controller implements ActionListener {
             JOptionPane.showMessageDialog(ventana, "La mesa aún no está inicializada.");
             return;
         }
-        if (nodoActual == null) nodoActual = listaPrincipal.getCabeza();
+        if (nodoActual == null)
+            nodoActual = listaPrincipal.getCabeza();
+
+        if (nodoActual.getDato().getClero() != pilaEliminados.removeFirst().getClero()) {
+            JOptionPane.showMessageDialog(ventana, "Deben ser del mismo clero para ser Rescatado");
+            return;
+        }
 
         // Desapilar
         Pastor rescatado = pilaEliminados.removeFirst();
@@ -285,24 +306,29 @@ public class Controller implements ActionListener {
         double restoDinero = Math.round((rescatador.getDinero() - mitadDinero) * 100.0) / 100.0;
         rescatador.setDinero(restoDinero);
 
-        // Insertar rescatado justo después del rescatador (manipulación directa de nodos)
+        // Insertar rescatado justo después del rescatador (manipulación directa de
+        // nodos)
         insertarDespues(nodoActual, rescatado);
 
-        JOptionPane.showMessageDialog(ventana, "Se rescató a " + rescatado.getNombre() + " (está junto al rescatador).");
+        JOptionPane.showMessageDialog(ventana,
+                "Se rescató a " + rescatado.getNombre() + " (está junto al rescatador).");
 
         actualizarVista();
     }
 
     /**
      * Robar: permitido solo si el pastor actual es el más pobre (por dinero).
-     * Robará 1/3 (enteros para feligreses, dinero con 2 decimales) del pastor más rico.
+     * Robará 1/3 (enteros para feligreses, dinero con 2 decimales) del pastor más
+     * rico.
      */
     private void robarJugador() {
         if (listaPrincipal == null || listaPrincipal.estaVacia()) {
             JOptionPane.showMessageDialog(ventana, "No hay partida activa.");
             return;
         }
-        if (nodoActual == null) nodoActual = listaPrincipal.getCabeza();
+        if (nodoActual == null) {
+            nodoActual = listaPrincipal.getCabeza();
+        }
 
         // Encontrar más pobre (por dinero) y más rico (por dinero)
         Nodo<Pastor> temp = listaPrincipal.getCabeza();
@@ -343,7 +369,8 @@ public class Controller implements ActionListener {
         rico.setDinero(Math.round((rico.getDinero() - dineroRobado) * 100.0) / 100.0);
 
         JOptionPane.showMessageDialog(ventana,
-                "El pastor " + pobre.getNombre() + " robó " + feligresesRobados + " feligreses y $" + dineroRobado + " de " + rico.getNombre());
+                "El pastor " + pobre.getNombre() + " robó " + feligresesRobados + " feligreses y $" + dineroRobado
+                        + " de " + rico.getNombre());
 
         actualizarVista();
     }
@@ -351,19 +378,28 @@ public class Controller implements ActionListener {
     /**
      * Terminar turno: avanza el nodoActual al siguiente.
      */
-    private void terminarTurno() {
+    private void siguienteTurno() {
         if (listaPrincipal == null || listaPrincipal.estaVacia()) {
             JOptionPane.showMessageDialog(ventana, "No hay partida activa.");
             return;
         }
-        if (nodoActual == null) nodoActual = listaPrincipal.getCabeza();
-        nodoActual = nodoActual.getSiguiente();
-        JOptionPane.showMessageDialog(ventana, "Turno pasado a: " + nodoActual.getDato().getNombre());
-        actualizarVista();
+
+        // Generar índice aleatorio entre 0 y tamaño-1
+        int tamanio = listaPrincipal.getTamanio();
+        int indiceAleatorio = (int) (Math.random() * tamanio);
+
+        // Recorrer hasta el índice aleatorio
+        nodoActual = listaPrincipal.getCabeza();
+        for (int i = 0; i < indiceAleatorio; i++) {
+            nodoActual = nodoActual.getSiguiente();
+        }
+
+        JOptionPane.showMessageDialog(ventana,
+                "Turno aleatorio asignado a: " + nodoActual.getDato().getNombre());
     }
 
     // ------------------------------
-    //  Helpers sobre la lista circular
+    // Helpers sobre la lista circular
     // ------------------------------
 
     /**
@@ -394,11 +430,12 @@ public class Controller implements ActionListener {
     }
 
     // ------------------------------
-    //  Métodos auxiliares existentes 
+    // Métodos auxiliares existentes
     // ------------------------------
 
     /**
-     * Crea n pastores con datos aleatorios y los agrega al final de una ListaCircularDoble.
+     * Crea n pastores con datos aleatorios y los agrega al final de una
+     * ListaCircularDoble.
      */
     public ListaCircularDoble<Pastor> crearListaPastores(int cantidadPastores) {
         ListaCircularDoble<Pastor> listaPastores = new ListaCircularDoble<>();

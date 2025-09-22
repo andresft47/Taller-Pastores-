@@ -4,17 +4,17 @@
  */
 package co.edu.udistrital.view;
 
-import java.awt.*;
+import java.awt.CardLayout;
+
 import javax.swing.JFrame;
-import javax.swing.*;
+import javax.swing.JPanel;
 
 //Responsable de administar a todos los panales del juego
 public class VentanaPrincipal extends JFrame {
 
-    private JPanel contenedor;   // Panel que contendra a todos los paneles
-    private PanelMenu pMenu;     // Panel del menú con botones
-    private PanelJuego pJuego;   // Panel del tablero central del juego
-    private PanelHistorial pHistorial; // Panel Historial de partidas Jugadas
+    private JPanel contenedor; // Panel que contendra a todos los paneles
+    private PanelMenu pMenu; // Panel del menú con botones
+    private PanelJuego pJuego; // Panel del tablero central del juego
     private PanelReglas pReglas;
     private CardLayout cardLayout;
 
@@ -29,14 +29,11 @@ public class VentanaPrincipal extends JFrame {
         // Creacion de cada panel del juego
         pMenu = new PanelMenu();
         pJuego = new PanelJuego();
-        pHistorial = new PanelHistorial();
         pReglas = new PanelReglas();
-        
 
         // Se agregan todos los paneles al contenedor
         contenedor.add(pMenu, "MENU");
         contenedor.add(pJuego, "JUEGO");
-        contenedor.add(pHistorial, "HISTORIAL");
         contenedor.add(pReglas, "REGLAS");
 
         add(contenedor); // el contenedor ocupa toda la ventana
@@ -74,14 +71,6 @@ public class VentanaPrincipal extends JFrame {
         this.pJuego = pJuego;
     }
 
-    public PanelHistorial getpHistorial() {
-        return pHistorial;
-    }
-
-    public void setpHistorial(PanelHistorial pHistorial) {
-        this.pHistorial = pHistorial;
-    }
-
     public CardLayout getCardLayout() {
         return cardLayout;
     }
@@ -97,5 +86,5 @@ public class VentanaPrincipal extends JFrame {
     public void setpReglas(PanelReglas pReglas) {
         this.pReglas = pReglas;
     }
-    
+
 }

@@ -4,19 +4,29 @@
  */
 package co.edu.udistrital.view;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.util.List;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class PanelJuego extends JPanel {
 
     private JButton btnVolver;
-    private JButton btnHistorial;
 
     // Botones de decisiones
     private JButton btnExpulsar;
     private JButton btnRescatar;
     private JButton btnRobar;
-    private JButton btnTerminarTurno;
 
     // Zona de mesa (participantes)
     private DefaultListModel<String> modeloMesa;
@@ -35,10 +45,8 @@ public class PanelJuego extends JPanel {
         panelTop.setBackground(Color.BLACK);
 
         btnVolver = crearBoton("Volver");
-        btnHistorial = crearBoton("Historial");
 
         panelTop.add(btnVolver);
-        panelTop.add(btnHistorial);
         add(panelTop, BorderLayout.NORTH);
 
         // ------- CENTRO (Mesa circular simulada) -------
@@ -61,7 +69,7 @@ public class PanelJuego extends JPanel {
 
         // ------- DERECHA (Eliminados) -------
         JPanel panelDerecha = new JPanel(new BorderLayout());
-        panelDerecha.setPreferredSize(new Dimension(200, 0));
+        panelDerecha.setPreferredSize(new Dimension(250, 0));
         panelDerecha.setBackground(new Color(30, 30, 30));
 
         JLabel lblEliminados = new JLabel("Eliminados", JLabel.CENTER);
@@ -85,12 +93,10 @@ public class PanelJuego extends JPanel {
         btnExpulsar = crearBoton("Expulsar");
         btnRescatar = crearBoton("Rescatar");
         btnRobar = crearBoton("Robar");
-        btnTerminarTurno = crearBoton("Terminar Turno");
 
         panelAcciones.add(btnExpulsar);
         panelAcciones.add(btnRescatar);
         panelAcciones.add(btnRobar);
-        panelAcciones.add(btnTerminarTurno);
 
         add(panelAcciones, BorderLayout.SOUTH);
     }
@@ -105,14 +111,24 @@ public class PanelJuego extends JPanel {
     }
 
     // Métodos para que el Controller actualice la vista
-    public void actualizarMesa(java.util.List<String> pastores) {
+    public void actualizarMesa(List<String> pastores) {
         modeloMesa.clear();
         for (String p : pastores) {
             modeloMesa.addElement(p);
         }
+        // Si solo queda un pastor en la lista, mostrar ganador
+        if (pastores.size() == 1) {
+            String ganador = pastores.get(0);
+            JOptionPane.showMessageDialog(
+                    null,
+                    "¡Ya hay un ganador!\nEl ganador es: " + ganador,
+                    "Fin de la partida",
+                    JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0);
+        }
     }
 
-    public void actualizarEliminados(java.util.List<String> eliminados) {
+    public void actualizarEliminados(List<String> eliminados) {
         modeloEliminados.clear();
         for (String p : eliminados) {
             modeloEliminados.addElement(p);
@@ -120,10 +136,36 @@ public class PanelJuego extends JPanel {
     }
 
     // Getters para el controlador
-    public JButton getBtnVolver() { return btnVolver; }
-    public JButton getBtnHistorial() { return btnHistorial; }
-    public JButton getBtnExpulsar() { return btnExpulsar; }
-    public JButton getBtnRescatar() { return btnRescatar; }
-    public JButton getBtnRobar() { return btnRobar; }
-    public JButton getBtnTerminarTurno() { return btnTerminarTurno; }
+    public JButton getBtnVolver() {
+        return btnVolver;
+    }
+
+    public JButton getBtnExpulsar() {
+        return btnExpulsar;
+    }
+
+    public JButton getBtnRescatar() {
+        return btnRescatar;
+    }
+
+    public JButton getBtnRobar() {
+        return btnRobar;
+    }
+
+    public DefaultListModel<String> getModeloMesa() {
+        return modeloMesa;
+    }
+
+    public void setModeloMesa(DefaultListModel<String> modeloMesa) {
+        this.modeloMesa = modeloMesa;
+    }
+
+    public JList<String> getListaMesa() {
+        return listaMesa;
+    }
+
+    public void setListaMesa(JList<String> listaMesa) {
+        this.listaMesa = listaMesa;
+    }
+
 }
